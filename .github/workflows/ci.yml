@@ -8,24 +8,24 @@ on:
 
 env:
   SESSION_SECRET: "01234567890123456789012345678901"
-  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vibecoder
+  DATABASE_URL: mysql://root:root@127.0.0.1:3306/vibecoder
 
 jobs:
   quality:
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:16-alpine
+      mysql:
+        image: mysql:8.4
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: vibecoder
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: vibecoder
         ports:
-          - 5432:5432
+          - 3306:3306
         options: >-
-          --health-cmd "pg_isready -U postgres -d vibecoder"
-          --health-interval 3s
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -proot --silent"
+          --health-interval 5s
           --health-timeout 5s
-          --health-retries 15
+          --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

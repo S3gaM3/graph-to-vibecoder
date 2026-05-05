@@ -1,12 +1,12 @@
 # Vibe Coder — тренажёр (LAN)
 
-Тренажёр для двух учётных записей (**Витя** и **Сёга**): парольный вход, отдельный прогресс и дневник в PostgreSQL. Запуск на вашем ПК в локальной сети; GitHub Actions проверяет сборку и Dockerfile.
+Тренажёр для двух учётных записей (**Витя** и **Сёга**): парольный вход, отдельный прогресс и дневник в MySQL. Запуск на вашем ПК в локальной сети; GitHub Actions проверяет сборку и Dockerfile.
 
 ## Что внутри
 
 - Next.js (App Router) + Tailwind, тёмная тема и моноширинные заголовки.
 - Контент юнитов в репозитории: [`content/curriculum.json`](content/curriculum.json) и [`content/units/*.md`](content/units/).
-- Prisma + PostgreSQL: пользователи, манифест, прогресс по юнитам, записи дневника.
+- Prisma + MySQL: пользователи, манифест, прогресс по юнитам, записи дневника.
 - Сессия в зашифрованном cookie (`iron-session`), секрет `SESSION_SECRET` (минимум 32 символа).
 
 ## Быстрый старт (разработка)
@@ -59,7 +59,7 @@ docker compose exec app npx prisma db seed
 
 ## GitHub Actions
 
-Workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml): PostgreSQL-сервис, `prisma migrate deploy`, `lint`, `typecheck`, `build`, проверочная сборка Docker без push в реестр.
+Workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml): MySQL-сервис, `prisma migrate deploy`, `lint`, `typecheck`, `build`, проверочная сборка Docker без push в реестр.
 
 Для успешного CI миграции должны быть в репозитории (`prisma/migrations`).
 

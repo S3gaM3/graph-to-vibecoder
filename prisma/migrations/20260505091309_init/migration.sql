@@ -1,68 +1,58 @@
 -- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "slug" TEXT NOT NULL,
-    "displayName" TEXT NOT NULL,
-    "passwordHash" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE `User` (
+    `id` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(191) NOT NULL,
+    `displayName` VARCHAR(191) NOT NULL,
+    `passwordHash` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Manifest" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "whoNow" TEXT NOT NULL DEFAULT '',
-    "whoBecome" TEXT NOT NULL DEFAULT '',
-    "obstacle" TEXT NOT NULL DEFAULT '',
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Manifest_pkey" PRIMARY KEY ("id")
-);
+    UNIQUE INDEX `User_slug_key`(`slug`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE "UnitProgress" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "unitId" TEXT NOT NULL,
-    "completedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "notes" TEXT,
+CREATE TABLE `Manifest` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `whoNow` TEXT NOT NULL,
+    `whoBecome` TEXT NOT NULL,
+    `obstacle` TEXT NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
 
-    CONSTRAINT "UnitProgress_pkey" PRIMARY KEY ("id")
-);
+    UNIQUE INDEX `Manifest_userId_key`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE "DiaryEntry" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "unitId" TEXT,
-    "body" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE `UnitProgress` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `unitId` VARCHAR(191) NOT NULL,
+    `completedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `notes` TEXT NULL,
 
-    CONSTRAINT "DiaryEntry_pkey" PRIMARY KEY ("id")
-);
+    INDEX `UnitProgress_userId_idx`(`userId`),
+    UNIQUE INDEX `UnitProgress_userId_unitId_key`(`userId`, `unitId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateIndex
-CREATE UNIQUE INDEX "User_slug_key" ON "User"("slug");
+-- CreateTable
+CREATE TABLE `DiaryEntry` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `unitId` VARCHAR(191) NULL,
+    `body` TEXT NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
--- CreateIndex
-CREATE UNIQUE INDEX "Manifest_userId_key" ON "Manifest"("userId");
-
--- CreateIndex
-CREATE INDEX "UnitProgress_userId_idx" ON "UnitProgress"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "UnitProgress_userId_unitId_key" ON "UnitProgress"("userId", "unitId");
-
--- CreateIndex
-CREATE INDEX "DiaryEntry_userId_idx" ON "DiaryEntry"("userId");
-
--- AddForeignKey
-ALTER TABLE "Manifest" ADD CONSTRAINT "Manifest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    INDEX `DiaryEntry_userId_idx`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE "UnitProgress" ADD CONSTRAINT "UnitProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Manifest` ADD CONSTRAINT `Manifest_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DiaryEntry" ADD CONSTRAINT "DiaryEntry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `UnitProgress` ADD CONSTRAINT `UnitProgress_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DiaryEntry` ADD CONSTRAINT `DiaryEntry_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,26 +1,25 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: mysql:8.4
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: vibecoder
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vibecoder
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mysqldata:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d vibecoder"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -proot --silent"]
       interval: 3s
       timeout: 5s
-      retries: 10
+      retries: 20
 
   app:
     build: .
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/vibecoder
+      DATABASE_URL: mysql://root:root@db:3306/vibecoder
       SESSION_SECRET: ${SESSION_SECRET}
       COOKIE_SECURE: "false"
       SEED_USER_VITYA_PASSWORD: ${SEED_USER_VITYA_PASSWORD}
@@ -30,4 +29,4 @@ services:
         condition: service_healthy
 
 volumes:
-  pgdata:
+  mysqldata:
