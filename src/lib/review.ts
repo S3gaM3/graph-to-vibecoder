@@ -42,7 +42,54 @@ function hasWord(text: string, word: string): boolean {
 export async function reviewSubmission(
   unitId: string,
   answer: string,
+  options?: {
+    mode?: "text" | "combo";
+    wrongClicks?: number;
+    maxSteps?: number;
+  },
 ): Promise<ReviewResult> {
+  const mode = options?.mode ?? "text";
+  if (mode === "combo") {
+    const wrongClicks = Math.max(0, options?.wrongClicks ?? 0);
+    const maxSteps = Math.max(1, options?.maxSteps ?? 3);
+    const completeness = answer.trim().split(".").filter((s) => s.trim().length > 0).length;
+    let score = 100;
+
+    if (completeness < maxSteps) {
+      score -= 35;
+    }
+    score -= Math.min(30, wrongClicks * 3);
+    score = Math.max(0, Math.min(100, score));
+
+    const passed = completeness >= maxSteps && score >= 70;
+    const issues: string[] = [];
+    const improvements: string[] = [];
+
+    if (completeness < maxSteps) {
+      issues.push("Комбинация собрана не полностью.");
+      improvements.push("Собери все шаги комбинации по порядку.");
+    }
+    if (wrongClicks > 0) {
+      issues.push(`Были лишние нажатия: ${wrongClicks}.`);
+      improvements.push(
+        "Смотри на порядок шагов и нажимай только следующий ожидаемый пункт.",
+      );
+    }
+    if (issues.length === 0) {
+      improvements.push("Отлично: комбинация собрана чисто и без ошибок.");
+    }
+
+    return {
+      score,
+      passed,
+      feedback: passed
+        ? "Зачтено: правильная комбинация собрана."
+        : "Пока не зачтено: собери комбинацию аккуратнее.",
+      issues,
+      improvements,
+    };
+  }
+
   const rubrics = await getRubrics();
   const unit = rubrics.units[unitId] ?? {};
   const merged: Rubric = {

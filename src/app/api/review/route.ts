@@ -9,6 +9,9 @@ import { getUnitState, markUnitDone } from "@/lib/progress";
 const postSchema = z.object({
   unitId: z.string().min(1),
   answer: z.string().min(1),
+  mode: z.enum(["text", "combo"]).optional(),
+  wrongClicks: z.number().int().min(0).optional(),
+  maxSteps: z.number().int().min(1).optional(),
 });
 
 export async function POST(request: Request) {
@@ -34,7 +37,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown unit" }, { status: 404 });
   }
 
-  const result = await reviewSubmission(parsed.data.unitId, parsed.data.answer);
+  const result = await reviewSubmission(parsed.data.unitId, parsed.data.answer, {
+    mode: parsed.data.mode ?? "text",
+    wrongClicks: parsed.data.wrongClicks,
+    maxSteps: parsed.data.maxSteps,
+  });
 
   await prisma.unitSubmission.create({
     data: {

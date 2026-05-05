@@ -43,7 +43,13 @@ export function UnitReviewPanel({
       const res = await fetch("/api/review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ unitId, answer }),
+        body: JSON.stringify({
+          unitId,
+          answer,
+          mode: "combo",
+          wrongClicks,
+          maxSteps: combo.sequence.length,
+        }),
       });
       const data = (await res.json()) as ReviewResult & { error?: string };
       if (!res.ok) {
