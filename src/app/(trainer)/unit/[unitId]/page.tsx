@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { getUnitMeta } from "@/lib/curriculum";
+import { getFlattenedUnits, getUnitMeta } from "@/lib/curriculum";
 import { loadUnitMarkdown } from "@/lib/markdown";
-import { getUnitState } from "@/lib/progress";
+import { getAllUnitStates, getUnitState } from "@/lib/progress";
 import { getTutorHint } from "@/lib/tutor";
 import { getReviewCombo } from "@/lib/review-combos";
 import { getUnitGuide } from "@/lib/unit-guides";
@@ -37,6 +38,15 @@ export default async function UnitPage(props: PageProps) {
 
   const state = await getUnitState(user.id, unitId);
   if (state === "locked") redirect("/dashboard");
+  const allUnits = await getFlattenedUnits();
+  const states = await getAllUnitStates(user.id);
+  const currentIndex = allUnits.findIndex((u) => u.id === unitId);
+  const prevUnit = currentIndex > 0 ? allUnits[currentIndex - 1] : null;
+  const nextUnit =
+    currentIndex >= 0 && currentIndex < allUnits.length - 1
+      ? allUnits[currentIndex + 1]
+      : null;
+  const nextLocked = nextUnit ? states[nextUnit.id] === "locked" : false;
 
   const hint = await getTutorHint(unitId);
   const combo = await getReviewCombo(unitId);
@@ -87,6 +97,45 @@ export default async function UnitPage(props: PageProps) {
               Для зачёта отправь решение в блоке проверки выше и набери проходной балл.
             </p>
           )}
+        </section>
+
+        <section className="max-w-3xl border border-neutral-800 p-4">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-neutral-500">
+            Переход по миссиям
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {prevUnit ? (
+              <Link
+                href={`/unit/${encodeURIComponent(prevUnit.id)}`}
+                className="border border-neutral-700 px-4 py-2 text-sm text-neutral-200 hover:border-accent"
+              >
+                ← Назад ({prevUnit.id})
+              </Link>
+            ) : (
+              <span className="border border-neutral-800 px-4 py-2 text-sm text-neutral-600">
+                ← Назад
+              </span>
+            )}
+
+            {nextUnit ? (
+              nextLocked ? (
+                <span className="border border-neutral-800 px-4 py-2 text-sm text-neutral-600">
+                  Далее ({nextUnit.id}) →
+                </span>
+              ) : (
+                <Link
+                  href={`/unit/${encodeURIComponent(nextUnit.id)}`}
+                  className="border border-neutral-700 px-4 py-2 text-sm text-neutral-200 hover:border-accent"
+                >
+                  Далее ({nextUnit.id}) →
+                </Link>
+              )
+            ) : (
+              <span className="border border-neutral-800 px-4 py-2 text-sm text-neutral-600">
+                Далее →
+              </span>
+            )}
+          </div>
         </section>
       </div>
       <TerminalTutor line={hint} />
