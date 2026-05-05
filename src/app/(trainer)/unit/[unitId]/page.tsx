@@ -4,6 +4,7 @@ import { getUnitMeta } from "@/lib/curriculum";
 import { loadUnitMarkdown } from "@/lib/markdown";
 import { getUnitState } from "@/lib/progress";
 import { getTutorHint } from "@/lib/tutor";
+import { getReviewCombo } from "@/lib/review-combos";
 import { MissionContent } from "@/components/MissionContent";
 import { TerminalTutor } from "@/components/TerminalTutor";
 import { UnitReviewPanel } from "@/components/UnitReviewPanel";
@@ -30,6 +31,7 @@ export default async function UnitPage(props: PageProps) {
   if (state === "locked") redirect("/dashboard");
 
   const hint = await getTutorHint(unitId);
+  const combo = await getReviewCombo(unitId);
 
   return (
     <>
@@ -48,7 +50,7 @@ export default async function UnitPage(props: PageProps) {
 
         <CodePlayground unitId={unitId} />
 
-        <UnitReviewPanel unitId={unitId} />
+        <UnitReviewPanel unitId={unitId} combo={combo} />
 
         <section className="max-w-3xl space-y-4">
           <h2 className="font-mono text-sm uppercase tracking-widest text-neutral-500">

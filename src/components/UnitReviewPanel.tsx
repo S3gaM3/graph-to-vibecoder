@@ -10,14 +10,33 @@ type ReviewResult = {
   improvements: string[];
 };
 
-export function UnitReviewPanel({ unitId }: { unitId: string }) {
-  const [answer, setAnswer] = useState("");
+type ComboConfig = {
+  sequence: string[];
+  distractors: string[];
+};
+
+export function UnitReviewPanel({
+  unitId,
+  combo,
+}: {
+  unitId: string;
+  combo: ComboConfig;
+}) {
+  const [picked, setPicked] = useState<string[]>([]);
+  const [wrongClicks, setWrongClicks] = useState(0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ReviewResult | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
+
+  const answer = picked.join(". ") + (picked.length ? "." : "");
+  const expected = combo.sequence[picked.length];
+  const complete = picked.length === combo.sequence.length;
+  const options = [...combo.sequence, ...combo.distractors];
 
   async function onCheck(e: React.FormEvent) {
     e.preventDefault();
+    if (!complete) return;
     setPending(true);
     setError(null);
     try {
@@ -39,26 +58,74 @@ export function UnitReviewPanel({ unitId }: { unitId: string }) {
     }
   }
 
+  function onTokenClick(token: string) {
+    if (complete) return;
+    if (token === expected) {
+      setPicked((prev) => [...prev, token]);
+      setHint(null);
+      return;
+    }
+    setWrongClicks((n) => n + 1);
+    setHint("Неверная кнопка для этого шага. Иди по логике миссии по порядку.");
+  }
+
+  function resetCombo() {
+    setPicked([]);
+    setWrongClicks(0);
+    setHint(null);
+    setResult(null);
+    setError(null);
+  }
+
   return (
     <section className="max-w-3xl space-y-4 border border-neutral-800 p-4">
       <h2 className="font-mono text-sm uppercase tracking-widest text-neutral-500">
         Проверка задания и разбор ошибок
       </h2>
       <form onSubmit={onCheck} className="space-y-4">
-        <textarea
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          rows={7}
-          className="w-full resize-y border border-neutral-700 bg-black px-3 py-2 font-sans text-sm text-foreground outline-none focus:border-accent"
-          placeholder="Опиши, как ты выполнил миссию: шаги, что проверил, какой итог получил."
-        />
+        <div className="space-y-3 border border-neutral-800 p-3">
+          <p className="text-sm text-neutral-300">
+            Собери ответ правильной комбинацией кнопок. Ошибки: {wrongClicks}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {options.map((token) => (
+              <button
+                key={token}
+                type="button"
+                onClick={() => onTokenClick(token)}
+                disabled={complete}
+                className="border border-neutral-700 px-3 py-1 text-left text-xs text-neutral-200 hover:border-accent disabled:opacity-50"
+              >
+                {token}
+              </button>
+            ))}
+          </div>
+          <div className="space-y-2">
+            {combo.sequence.map((_, idx) => (
+              <div
+                key={idx}
+                className="border border-neutral-800 bg-black px-2 py-1 text-xs text-neutral-300"
+              >
+                {picked[idx] ?? `Шаг ${idx + 1}: ожидает правильную кнопку`}
+              </div>
+            ))}
+          </div>
+          {hint ? <p className="text-sm text-amber-400">{hint}</p> : null}
+          <button
+            type="button"
+            onClick={resetCombo}
+            className="font-mono text-xs text-neutral-400 hover:text-accent"
+          >
+            Сбросить комбинацию
+          </button>
+        </div>
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
         <button
           type="submit"
-          disabled={pending || answer.trim().length === 0}
+          disabled={pending || !complete}
           className="bg-accent px-6 py-2 font-mono text-xs font-bold uppercase tracking-widest text-black hover:opacity-90 disabled:opacity-50"
         >
-          {pending ? "Проверяем…" : "Проверить"}
+          {pending ? "Проверяем…" : "Проверить комбинацию"}
         </button>
       </form>
 
