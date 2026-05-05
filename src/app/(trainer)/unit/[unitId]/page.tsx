@@ -5,10 +5,12 @@ import { loadUnitMarkdown } from "@/lib/markdown";
 import { getUnitState } from "@/lib/progress";
 import { getTutorHint } from "@/lib/tutor";
 import { getReviewCombo } from "@/lib/review-combos";
+import { getUnitGuide } from "@/lib/unit-guides";
 import { MissionContent } from "@/components/MissionContent";
 import { TerminalTutor } from "@/components/TerminalTutor";
 import { UnitReviewPanel } from "@/components/UnitReviewPanel";
 import { CodePlayground } from "@/components/CodePlayground";
+import { UnitGuidePanel } from "@/components/UnitGuidePanel";
 
 type PageProps = {
   params: Promise<{ unitId: string }>;
@@ -32,6 +34,7 @@ export default async function UnitPage(props: PageProps) {
 
   const hint = await getTutorHint(unitId);
   const combo = await getReviewCombo(unitId);
+  const guide = await getUnitGuide(unitId);
 
   return (
     <>
@@ -47,6 +50,7 @@ export default async function UnitPage(props: PageProps) {
         </header>
 
         <MissionContent source={md} />
+        <UnitGuidePanel guide={guide} />
 
         <CodePlayground unitId={unitId} />
 

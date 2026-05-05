@@ -15,6 +15,9 @@ export function Nav() {
           <Link href="/dashboard" className="hover:text-foreground">
             Карта продукта
           </Link>
+          <Link href="/knowledge-base" className="hover:text-foreground">
+            База знаний
+          </Link>
           <Link href="/profile" className="hover:text-foreground">
             Манифест
           </Link>
