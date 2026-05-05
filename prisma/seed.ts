@@ -18,7 +18,7 @@ const users = [
   },
   {
     slug: "sega",
-    displayName: "Сёга",
+    displayName: "Сега",
     role: "mentor",
     envKey: "SEED_USER_SEGA_PASSWORD" as const,
   },
