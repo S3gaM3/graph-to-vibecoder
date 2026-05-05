@@ -6,7 +6,8 @@ import { getUnitState } from "@/lib/progress";
 import { getTutorHint } from "@/lib/tutor";
 import { MissionContent } from "@/components/MissionContent";
 import { TerminalTutor } from "@/components/TerminalTutor";
-import { CompleteMissionButton } from "@/components/CompleteMissionButton";
+import { UnitReviewPanel } from "@/components/UnitReviewPanel";
+import { CodePlayground } from "@/components/CodePlayground";
 
 type PageProps = {
   params: Promise<{ unitId: string }>;
@@ -45,15 +46,24 @@ export default async function UnitPage(props: PageProps) {
 
         <MissionContent source={md} />
 
+        <CodePlayground unitId={unitId} />
+
+        <UnitReviewPanel unitId={unitId} />
+
         <section className="max-w-3xl space-y-4">
           <h2 className="font-mono text-sm uppercase tracking-widest text-neutral-500">
             Прогресс
           </h2>
-          <CompleteMissionButton
-            unitId={unitId}
-            canComplete={state === "available"}
-            alreadyDone={state === "done"}
-          />
+          <p className="text-sm text-neutral-400">
+            Отметка «пройдено» ставится автоматически после успешной проверки задания.
+          </p>
+          {state === "done" ? (
+            <p className="font-mono text-sm text-accent">Миссия зачтена автоматически.</p>
+          ) : (
+            <p className="font-sans text-sm text-neutral-500">
+              Для зачёта отправь решение в блоке проверки выше и набери проходной балл.
+            </p>
+          )}
         </section>
       </div>
       <TerminalTutor line={hint} />

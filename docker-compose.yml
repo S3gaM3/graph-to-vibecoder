@@ -5,7 +5,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: vibecoder
     ports:
-      - "3306:3306"
+      - "${MYSQL_HOST_PORT:-3307}:3306"
     volumes:
       - mysqldata:/var/lib/mysql
     healthcheck:

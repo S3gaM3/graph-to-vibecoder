@@ -16,6 +16,7 @@ model User {
   manifest     Manifest?
   progress     UnitProgress[]
   diary        DiaryEntry[]
+  submissions  UnitSubmission[]
 }
 
 model Manifest {
@@ -49,4 +50,20 @@ model DiaryEntry {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+model UnitSubmission {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unitId         String
+  answer         String   @db.Text
+  score          Int
+  passed         Boolean
+  feedback       String   @db.Text
+  issuesJson     String   @db.Text
+  improvementsJson String @db.Text
+  createdAt      DateTime @default(now())
+
+  @@index([userId, unitId, createdAt])
 }

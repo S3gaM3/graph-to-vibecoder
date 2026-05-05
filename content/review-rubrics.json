@@ -1,0 +1,37 @@
+{
+  "default": {
+    "passScore": 70,
+    "minLength": 180,
+    "requiredKeywords": ["промпт", "структура", "проверка"],
+    "recommendedKeywords": ["данные", "компонент", "состояние"]
+  },
+  "units": {
+    "1.1": {
+      "requiredKeywords": ["компонент", "props", "цена", "название"]
+    },
+    "2.1": {
+      "requiredKeywords": ["cursor", "tailwind", "промпт", "скрин"]
+    },
+    "3.3": {
+      "requiredKeywords": ["форма", "email", "валидация", "поле"]
+    },
+    "4.2": {
+      "requiredKeywords": ["лендинг", "email", "база", "лид"]
+    },
+    "5.1": {
+      "requiredKeywords": ["структура", "токены", "данные", "деплой"]
+    },
+    "5.2": {
+      "requiredKeywords": ["отзывы", "рейтинг", "карточка", "данные"]
+    },
+    "5.3": {
+      "requiredKeywords": ["итерация", "правка", "проверка", "экран"]
+    },
+    "6.1": {
+      "requiredKeywords": ["семантика", "section", "main", "доступность"]
+    },
+    "6.2": {
+      "requiredKeywords": ["тест", "сценарий", "проверка", "ошибка"]
+    }
+  }
+}
