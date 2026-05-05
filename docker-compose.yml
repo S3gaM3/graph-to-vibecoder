@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vibecoder
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d vibecoder"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/vibecoder
+      SESSION_SECRET: ${SESSION_SECRET}
+      COOKIE_SECURE: "false"
+      SEED_USER_VITYA_PASSWORD: ${SEED_USER_VITYA_PASSWORD}
+      SEED_USER_SEGA_PASSWORD: ${SEED_USER_SEGA_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

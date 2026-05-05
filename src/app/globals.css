@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --accent: #00ff41;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-manrope);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.markdown-body h1 {
+  @apply font-mono text-2xl font-bold tracking-tight mt-8 mb-4 text-foreground;
+}
+
+.markdown-body h2 {
+  @apply font-mono text-lg font-semibold mt-6 mb-3 text-foreground;
+}
+
+.markdown-body p {
+  @apply font-sans text-base leading-relaxed mb-4 text-neutral-300;
+}
+
+.markdown-body ul {
+  @apply list-disc pl-6 mb-4 space-y-2 text-neutral-300 font-sans;
+}
+
+.markdown-body ol {
+  @apply list-decimal pl-6 mb-4 space-y-2 text-neutral-300 font-sans;
+}
+
+.markdown-body strong {
+  @apply text-foreground font-semibold;
+}
+
+.markdown-body a {
+  @apply text-accent underline underline-offset-4 hover:opacity-90;
+}

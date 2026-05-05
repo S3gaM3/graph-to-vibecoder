@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  displayName  String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  manifest     Manifest?
+  progress     UnitProgress[]
+  diary        DiaryEntry[]
+}
+
+model Manifest {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  whoNow    String   @default("")
+  whoBecome String   @default("")
+  obstacle  String   @default("")
+  updatedAt DateTime @updatedAt
+}
+
+model UnitProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unitId      String
+  completedAt DateTime @default(now())
+  notes       String?
+
+  @@unique([userId, unitId])
+  @@index([userId])
+}
+
+model DiaryEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unitId    String?
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
