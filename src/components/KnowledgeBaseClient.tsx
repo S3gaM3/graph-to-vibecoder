@@ -5,10 +5,12 @@ import type { KnowledgeSection } from "@/lib/knowledge-base";
 
 export function KnowledgeBaseClient({
   sections,
+  initialQuery = "",
 }: {
   sections: KnowledgeSection[];
+  initialQuery?: string;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const q = query.trim().toLowerCase();
 
   const filtered = useMemo(() => {

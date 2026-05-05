@@ -3,11 +3,17 @@ import { getCurrentUser } from "@/lib/auth";
 import { getKnowledgeBase } from "@/lib/knowledge-base";
 import { KnowledgeBaseClient } from "@/components/KnowledgeBaseClient";
 
-export default async function KnowledgeBasePage() {
+export default async function KnowledgeBasePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
   const sections = await getKnowledgeBase();
+  const params = await searchParams;
+  const initialQuery = params.q ?? "";
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -21,7 +27,7 @@ export default async function KnowledgeBasePage() {
           данным, проверкам и качеству. Используй поиск перед каждой миссией.
         </p>
       </header>
-      <KnowledgeBaseClient sections={sections} />
+      <KnowledgeBaseClient sections={sections} initialQuery={initialQuery} />
     </div>
   );
 }

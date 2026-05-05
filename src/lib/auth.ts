@@ -22,6 +22,7 @@ export async function login(slug: string, password: string): Promise<boolean> {
   session.userId = user.id;
   session.slug = user.slug;
   session.displayName = user.displayName;
+  session.role = user.role;
   session.isLoggedIn = true;
   await session.save();
   return true;
@@ -38,7 +39,7 @@ export async function getCurrentUser() {
   if (!session.isLoggedIn || !session.userId) return null;
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { id: true, slug: true, displayName: true },
+    select: { id: true, slug: true, displayName: true, role: true },
   });
   return user;
 }

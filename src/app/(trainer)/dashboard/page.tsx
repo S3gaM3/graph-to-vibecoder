@@ -5,6 +5,7 @@ import {
   getCompletionStats,
   getRankByPercent,
   getSubmissionInsights,
+  getStudentsOverview,
 } from "@/lib/progress";
 import { ProductMap } from "@/components/ProductMap";
 
@@ -16,6 +17,7 @@ export default async function DashboardPage() {
   const stats = await getCompletionStats(user.id);
   const rank = getRankByPercent(stats.percent);
   const insights = await getSubmissionInsights(user.id);
+  const students = user.role === "mentor" ? await getStudentsOverview() : [];
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -72,6 +74,29 @@ export default async function DashboardPage() {
           </ul>
         </article>
       </section>
+
+      {user.role === "mentor" ? (
+        <section className="space-y-4 border border-neutral-800 p-4">
+          <header className="space-y-1">
+            <p className="font-mono text-xs uppercase tracking-wider text-accent">
+              Панель наставника
+            </p>
+            <h2 className="font-mono text-lg">Прогресс студентов</h2>
+          </header>
+          <div className="grid gap-3 md:grid-cols-2">
+            {students.map((s) => (
+              <article key={s.id} className="border border-neutral-900 p-3">
+                <p className="font-mono text-sm text-foreground">{s.displayName}</p>
+                <p className="text-xs text-neutral-500">@{s.slug}</p>
+                <p className="mt-2 font-mono text-xl text-accent">{s.percent}%</p>
+                <p className="text-sm text-neutral-400">
+                  {s.done} из {s.total} миссий зачтено
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <ProductMap states={states} />
     </div>

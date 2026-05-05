@@ -1,6 +1,6 @@
 # Vibe Coder — тренажёр (LAN)
 
-Тренажёр для двух учётных записей (**Витя** и **Сёга**): парольный вход, отдельный прогресс и дневник в MySQL. Запуск полностью локальный, без GitHub Actions.
+Тренажёр для трёх учётных записей (**Витя**, **Паша** и **Сёга**): парольный вход, отдельный прогресс и дневник в MySQL. Запуск полностью локальный, без GitHub Actions.
 
 ## Что внутри
 
@@ -17,13 +17,14 @@
 .\start-local.ps1
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000). Логины: `vitya` или `sega`, пароли — те, что в `.env`.
+Откройте [http://localhost:3000](http://localhost:3000). Логины: `vitya`, `pasha`, `sega`, пароли — те, что в `.env`.
 
 Если Docker ругается, что занят порт `3306`, это норм: у вас уже запущен локальный MySQL. В проекте по умолчанию проброс стоит на `3307` (`MYSQL_HOST_PORT`), так что конфликтов быть не должно.
 
 По умолчанию (если `.env` не задан):
 
 - `vitya` / `vitya12345`
+- `pasha` / `pasha12345`
 - `sega` / `sega12345`
 
 Приложение автоматически:
@@ -50,6 +51,7 @@
 
 ```env
 SEED_USER_VITYA_PASSWORD=your_strong_password
+SEED_USER_PASHA_PASSWORD=your_strong_password
 SEED_USER_SEGA_PASSWORD=your_strong_password
 SESSION_SECRET=your_32_plus_chars_secret
 ```

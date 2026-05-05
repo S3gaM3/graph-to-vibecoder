@@ -4,8 +4,24 @@ import * as bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 const users = [
-  { slug: "vitya", displayName: "Витя", envKey: "SEED_USER_VITYA_PASSWORD" as const },
-  { slug: "sega", displayName: "Сёга", envKey: "SEED_USER_SEGA_PASSWORD" as const },
+  {
+    slug: "vitya",
+    displayName: "Витя",
+    role: "student",
+    envKey: "SEED_USER_VITYA_PASSWORD" as const,
+  },
+  {
+    slug: "pasha",
+    displayName: "Паша",
+    role: "student",
+    envKey: "SEED_USER_PASHA_PASSWORD" as const,
+  },
+  {
+    slug: "sega",
+    displayName: "Сёга",
+    role: "mentor",
+    envKey: "SEED_USER_SEGA_PASSWORD" as const,
+  },
 ];
 
 async function main() {
@@ -22,10 +38,12 @@ async function main() {
       create: {
         slug: u.slug,
         displayName: u.displayName,
+        role: u.role,
         passwordHash,
       },
       update: {
         displayName: u.displayName,
+        role: u.role,
         passwordHash,
       },
     });

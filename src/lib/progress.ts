@@ -129,3 +129,40 @@ export async function getSubmissionInsights(userId: string) {
 
   return { recent, topIssues };
 }
+
+export async function getStudentsOverview() {
+  const students = await prisma.user.findMany({
+    where: { role: "student" },
+    select: { id: true, slug: true, displayName: true },
+    orderBy: { displayName: "asc" },
+  });
+
+  const ordered = await getFlattenedUnits();
+  const total = ordered.length;
+
+  const result: Array<{
+    id: string;
+    slug: string;
+    displayName: string;
+    done: number;
+    total: number;
+    percent: number;
+  }> = [];
+
+  for (const student of students) {
+    const done = await prisma.unitProgress.count({
+      where: { userId: student.id },
+    });
+    const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+    result.push({
+      id: student.id,
+      slug: student.slug,
+      displayName: student.displayName,
+      done,
+      total,
+      percent,
+    });
+  }
+
+  return result;
+}

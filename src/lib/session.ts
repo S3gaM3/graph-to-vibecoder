@@ -4,6 +4,7 @@ export type SessionPayload = {
   userId?: string;
   slug?: string;
   displayName?: string;
+  role?: string;
   isLoggedIn?: boolean;
 };
 
@@ -11,6 +12,7 @@ export const defaultSession: SessionPayload = {
   userId: "",
   slug: "",
   displayName: "",
+  role: "",
   isLoggedIn: false,
 };
 

@@ -6,11 +6,17 @@ import { getUnitState } from "@/lib/progress";
 import { getTutorHint } from "@/lib/tutor";
 import { getReviewCombo } from "@/lib/review-combos";
 import { getUnitGuide } from "@/lib/unit-guides";
+import {
+  getPersonalizedKnowledgeRecommendations,
+  getUnitKnowledgeLinks,
+} from "@/lib/knowledge-base";
 import { MissionContent } from "@/components/MissionContent";
 import { TerminalTutor } from "@/components/TerminalTutor";
 import { UnitReviewPanel } from "@/components/UnitReviewPanel";
 import { CodePlayground } from "@/components/CodePlayground";
 import { UnitGuidePanel } from "@/components/UnitGuidePanel";
+import { UnitKnowledgeLinks } from "@/components/UnitKnowledgeLinks";
+import { getSubmissionInsights } from "@/lib/progress";
 
 type PageProps = {
   params: Promise<{ unitId: string }>;
@@ -35,6 +41,12 @@ export default async function UnitPage(props: PageProps) {
   const hint = await getTutorHint(unitId);
   const combo = await getReviewCombo(unitId);
   const guide = await getUnitGuide(unitId);
+  const kbSections = await getUnitKnowledgeLinks(unitId);
+  const insights = await getSubmissionInsights(user.id);
+  const personalized = await getPersonalizedKnowledgeRecommendations(
+    unitId,
+    insights.topIssues,
+  );
 
   return (
     <>
@@ -50,6 +62,11 @@ export default async function UnitPage(props: PageProps) {
         </header>
 
         <MissionContent source={md} />
+        <UnitKnowledgeLinks
+          unitId={unitId}
+          sections={kbSections}
+          personalized={personalized}
+        />
         <UnitGuidePanel guide={guide} />
 
         <CodePlayground unitId={unitId} />
