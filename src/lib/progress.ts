@@ -133,7 +133,7 @@ export async function getSubmissionInsights(userId: string) {
 export async function getStudentsOverview() {
   const students = await prisma.user.findMany({
     where: { role: "student" },
-    select: { id: true, slug: true, displayName: true },
+    select: { id: true, slug: true, displayName: true, currentUnitId: true, lastSeenAt: true },
     orderBy: { displayName: "asc" },
   });
 
@@ -147,6 +147,9 @@ export async function getStudentsOverview() {
     done: number;
     total: number;
     percent: number;
+    currentUnitId: string | null;
+    online: boolean;
+    lastSeenAt: Date | null;
   }> = [];
 
   for (const student of students) {
@@ -154,6 +157,9 @@ export async function getStudentsOverview() {
       where: { userId: student.id },
     });
     const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+    const now = Date.now();
+    const lastSeenMs = student.lastSeenAt ? student.lastSeenAt.getTime() : 0;
+    const online = lastSeenMs > 0 && now - lastSeenMs <= 90_000;
     result.push({
       id: student.id,
       slug: student.slug,
@@ -161,6 +167,9 @@ export async function getStudentsOverview() {
       done,
       total,
       percent,
+      currentUnitId: student.currentUnitId ?? null,
+      online,
+      lastSeenAt: student.lastSeenAt ?? null,
     });
   }
 

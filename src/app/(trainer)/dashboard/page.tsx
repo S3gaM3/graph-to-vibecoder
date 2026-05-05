@@ -86,11 +86,32 @@ export default async function DashboardPage() {
           <div className="grid gap-3 md:grid-cols-2">
             {students.map((s) => (
               <article key={s.id} className="border border-neutral-900 p-3">
-                <p className="font-mono text-sm text-foreground">{s.displayName}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-mono text-sm text-foreground">{s.displayName}</p>
+                  <span
+                    className={`text-[10px] uppercase tracking-wider ${
+                      s.online ? "text-accent" : "text-neutral-500"
+                    }`}
+                  >
+                    {s.online ? "в сети" : "не в сети"}
+                  </span>
+                </div>
                 <p className="text-xs text-neutral-500">@{s.slug}</p>
                 <p className="mt-2 font-mono text-xl text-accent">{s.percent}%</p>
                 <p className="text-sm text-neutral-400">
                   {s.done} из {s.total} миссий зачтено
+                </p>
+                <p className="mt-1 text-xs text-neutral-500">
+                  Сейчас: {s.currentUnitId ? `миссия ${s.currentUnitId}` : "вне миссии"}
+                </p>
+                <p className="text-xs text-neutral-600">
+                  Последняя активность:{" "}
+                  {s.lastSeenAt
+                    ? s.lastSeenAt.toLocaleString("ru-RU", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })
+                    : "нет данных"}
                 </p>
               </article>
             ))}

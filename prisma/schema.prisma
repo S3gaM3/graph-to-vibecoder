@@ -12,6 +12,8 @@ model User {
   slug         String   @unique
   displayName  String
   role         String   @default("student")
+  currentUnitId String?
+  lastSeenAt    DateTime?
   passwordHash String
   createdAt    DateTime @default(now())
   manifest     Manifest?
